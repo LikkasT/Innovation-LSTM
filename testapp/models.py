@@ -16,6 +16,7 @@ from django.db import models
 #     }
 # }
 
+
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)  # 单一主键
     steam_id = models.CharField(max_length=30, unique=True)
@@ -26,6 +27,7 @@ class User(models.Model):
     # example = models.CharField(default=5) # 不想要的字段注释掉重新运行makemigrations两步即可
     # PS: 如果要加入字段则会面临两个选择，选1随后输入默认值
     # 选2则退出，需要给字段加默认值，如上方的example      或者直接默认空值（不建议）
+
 
 class Transaction(models.Model):
     transaction_id = models.AutoField(primary_key=True)
