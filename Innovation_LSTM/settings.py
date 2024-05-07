@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'Innovation_LSTM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'CSshop',
+        'NAME': 'CSSshop',
         'USER': 'root',
         'PASSWORD': 'Szc#030609',
         'HOST': 'localhost',

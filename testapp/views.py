@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import json
-from models import *
+from .models import *
 
 
 # Create your views here.
@@ -40,11 +40,20 @@ def create_user():
             phoneNumber = register['phone_number']
             emAil = register['email']
             passWord = register['password']
-            if User.objects.filter(phone_number=phoneNumber).exists():
-                return 0
-                # 电话号码重复则返回一个报错信息
-            else:
-                User.objects.create(steam_id=steamId,  username=userName,
-                                    phone_number=phoneNumber, email=emAil, password=passWord)
-                return 1
-                # 返回一个保存成功的标识
+        if models.User.objects.filter(phone_number=phoneNumber).exists():
+            return 0
+            # 电话号码重复则返回一个报错信息
+        else:
+            models.User.objects.create(steam_id=steamId, username=userName,
+                                       phone_number=phoneNumber, email=emAil, password=passWord)
+            return 1
+            # 返回一个保存成功的标识
+
+
+# def user_login():
+#     with open('login.json', 'r') as file:
+#         json2Data = file.read()
+#         userData = json.loads(json2Data)
+#         for user in userData['login']:
+#             phoneNumber = user['phone_number']
+#             passWord = user['password']
