@@ -20,7 +20,6 @@ from testapp import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('index/', views.index),
-    path('enroll/', views.enroll),
-    path('login/', views.login)
+    path('api/create_user/', views.create_user),
+    path('api/user_login/', views.user_login)
 ]

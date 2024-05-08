@@ -1,19 +1,14 @@
 from django.shortcuts import render
-import json
 from .models import *
-
+from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
+from django.contrib.auth.hashers import check_password
+import requests
 
 # Create your views here.
-def index(request):
-    return render(request, 'index.html')
-
-
-def login(request):
-    return render(request, 'login.html')
-
-
-def enroll(request):
-    return render(request, 'enroll.html')
+url = 'http://localhost:8080'
+headers = {'Content-Type': 'application/json'}
+data = {'key': 'value'}
 
 
 # 假设以下json文件是注册的前端传输文件
@@ -29,10 +24,9 @@ def enroll(request):
 #     }
 #   ]
 # }
-def create_user():
-    with open('register.json', 'r') as file:
-        jsonData = file.read()
-        registerData = json.loads(jsonData)
+def create_user(request):
+    if request.method == 'POST':
+        registerData = request.data.POST
         for register in registerData['register']:
             steamId = register['steamid']
             # picTure = register['picture']
@@ -41,19 +35,31 @@ def create_user():
             emAil = register['email']
             passWord = register['password']
         if models.User.objects.filter(phone_number=phoneNumber).exists():
-            return 0
-            # 电话号码重复则返回一个报错信息
+            error_message = 'Registration failed. Please check your input.'
+            return Response({'error': error_message}, status=HTTP_400_BAD_REQUEST)
         else:
             models.User.objects.create(steam_id=steamId, username=userName,
                                        phone_number=phoneNumber, email=emAil, password=passWord)
-            return 1
+            response_data = {'message': 'Registration successful'}
+            return Response(response_data, status=200)
             # 返回一个保存成功的标识
 
 
-# def user_login():
-#     with open('login.json', 'r') as file:
-#         json2Data = file.read()
-#         userData = json.loads(json2Data)
-#         for user in userData['login']:
-#             phoneNumber = user['phone_number']
-#             passWord = user['password']
+def user_login(request):
+    if request.method == 'POST':
+        userData = request.data.POST
+        for user in userData['login']:
+            phoneNumber = user['phone_number']
+            passWord = user['password']
+        if models.User.objects.filter(phone_number=phoneNumber).exists():
+            user = User.objects.get(phone_number=phoneNumber)
+            password_match = check_password(passWord, user.password)
+            if password_match:
+                response_data = {'message': 'login successful'}
+                return Response(response_data, status=200)
+            else:
+                error_message = 'login failed. Please check your password.'
+                return Response({'error': error_message}, status=HTTP_400_BAD_REQUEST)
+        else:
+            error_message = 'login failed. Please check your phone number.'
+            return Response({'error': error_message}, status=HTTP_400_BAD_REQUEST)
