@@ -10,16 +10,16 @@
                 </el-upload>
             </el-form-item>
 
-            <el-form-item label="ID">
+            <el-form-item label="用户ID">
                 <el-input v-model="form.id"></el-input>
             </el-form-item>
-            <el-form-item label="信息一">
+            <el-form-item label="用户名称">
                 <el-input v-model="form.info1"></el-input>
             </el-form-item>
-            <el-form-item label="信息二">
+            <el-form-item label="手机号码">
                 <el-input v-model="form.info2"></el-input>
             </el-form-item>
-            <el-form-item label="信息三">
+            <el-form-item label="电子邮箱">
                 <el-input v-model="form.info3"></el-input>
             </el-form-item>
             <el-form-item label="修改密码">
