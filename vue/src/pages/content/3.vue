@@ -18,21 +18,21 @@ export default {
     data() {
         return {
             tableData: [{
-                name: '王小虎',
-                add1: '30%',
-                add2: '60%'
+                name: 'AK-47 | 可燃冰',
+                add1: '7%',
+                add2: '31%'
             }, {
-                name: '王小虎',
-                add1: '30%',
-                add2: '60%'
+                name: '双持贝瑞塔 | 左右开花',
+                add1: '45%',
+                add2: '31%'
             }, {
-                name: '王小虎',
+                name: 'USP 消音版 | 引擎故障灯',
                 add1: '30%',
-                add2: '60%'
+                add2: '110%'
             }, {
-                name: '王小虎',
+                name: 'XM1014 | 斯康里娅',
                 add1: '30%',
-                add2: '60%'
+                add2: '20%'
             }]
         }
     },

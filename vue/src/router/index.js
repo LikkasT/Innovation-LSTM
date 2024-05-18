@@ -7,6 +7,8 @@ import Content3 from '@/pages/content/3';
 import UserInfo from '@/pages/userInfo/index';
 import GoodsInfo from '@/pages/goodsInfo/index';
 import Jiaoyi from '@/pages/jiaoyi/index';
+// import Login from '@/pages/login/Login'
+// import Register from '@/pages/register/Register'
 Vue.use(Router)
 
 export default new Router({
@@ -41,7 +43,17 @@ export default new Router({
         path: '/Jiaoyi',
         name: 'jiaoyi',
         component: Jiaoyi,
-      }
+      },
+        // {
+        //   path: '/Register',
+        //   name: 'register',
+        //   component: Register,
+        // },
+        // {
+        //   path: '/Login',
+        //   name: 'login',
+        //   component: Login,
+        // }
       ]
     },
 

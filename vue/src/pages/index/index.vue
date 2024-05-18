@@ -5,16 +5,16 @@
                 <el-row>
                     <el-col :span="4">
                         <div class="flex-row avator-con" @click="gotoUserInfo">
-                            <img src="@/assets/logo.png" alt="" srcset="">
+                            <img src="@/assets/Yinxing2.png" alt="" srcset="">
                             <div class="flex-column avator-info">
-                                <p>用户名称</p>
-                                <p>用户ID</p>
+                                <p>隐星</p>
+                                <p>114514</p>
                             </div>
                         </div>
                     </el-col>
                     <el-col :span="14">
                         <div class="dollar-con">
-                            <p @click="gotoJiaoyi">$888888</p>
+                            <p @click="gotoJiaoyi">$1919810</p>
                         </div>
                     </el-col>
                     <el-col :span="6">
@@ -154,7 +154,7 @@ export default {
 
 .el-header,
 .el-footer {
-    background-color: #ffffff;
+    background-color: #f7f9fc;
     color: #333;
     text-align: center;
     height: 100px !important;

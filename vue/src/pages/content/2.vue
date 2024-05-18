@@ -41,39 +41,39 @@ export default {
         return {
             activeName: '1',
             tableData: [{
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                jiaoyi: 1748
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                jiaoyi: 1748
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片3.png'),
+                name: '印花 | Vitality（全息）| 2023年巴黎锦标赛',
+                jiaoyi: 358
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片4.png'),
+                name: '双持贝瑞塔 | 左右开花',
+                jiaoyi: 445
             }],
             tableData2: [{
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片5.png'),
+                name: 'USP 消音版 | 引擎故障灯',
+                jiaoyi: 1145
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                jiaoyi: 2581
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
+                img: require('../../assets/图片6.png'),
+                name: 'XM1014 | 斯康里娅',
+                jiaoyi: 1101
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                jiaoyi: '20000'
-            }],
+                img: require('../../assets/图片7.png'),
+                name: 'M4A4 | 沙漠精英',
+                jiaoyi: 789
+            }]
         }
     },
 }

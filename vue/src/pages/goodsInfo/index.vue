@@ -1,13 +1,14 @@
 <template>
     <div class="container">
         <div class="head-con flex-row">
-            <img src="@/assets/logo.png" alt="" srcset="">
+            <img src="@/assets/图片2.png" alt="" srcset="">
             <div class="r-con">
                 <div class="flex-row flex-between">
-                    <p>名称</p>
+                    <p>AK-47 | 可燃冰</p>
                     <img @click="guanzhu" :src="imageUrl" alt="">
                 </div>
                 <el-tabs class="tab-con" v-model="activeName" type="card">
+                    略有磨损
                     <el-tab-pane label="1" name="1"></el-tab-pane>
                     <el-tab-pane label="2" name="2"></el-tab-pane>
                     <el-tab-pane label="3" name="3"></el-tab-pane>
@@ -91,13 +92,13 @@ export default {
                     name: 'lstm预测曲线',
                     type: 'line',
                     stack: 'Total',
-                    data: [120, 132, 101, 134, 90, 230, 210]
+                    data: [755.0158691406, 753.1727294922, 749.3392333984, 746.6011962891, 747.4799194336, 752.0186157227, 757.573059082]
                 },
                 {
                     name: '其他模型预测曲线',
                     type: 'line',
                     stack: 'Total',
-                    data: [220, 182, 191, 234, 290, 330, 310]
+                    data: [714, 717, 700, 689, 701, 714, 704]
                 },
 
             ]

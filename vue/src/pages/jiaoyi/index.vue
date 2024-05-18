@@ -59,29 +59,29 @@ export default {
         return {
             options: [{
                 value: '1',
-                label: '商品1',
+                label: 'AK-47 | 可燃冰',
                 price: '300',
-                img: require('../../assets/logo.png'),
+                img: require('../../assets/图片2.png'),
             }, {
                 value: '2',
-                label: '商品2',
+                label: '印花 | Vitality（全息）| 2023年巴黎锦标赛',
                 price: '300',
-                img: require('../../assets/logo.png'),
+                img: require('../../assets/图片3.png'),
             }, {
                 value: '3',
-                label: '商品3',
+                label: '双持贝瑞塔 | 左右开花',
                 price: '300',
-                img: require('../../assets/logo.png'),
+                img: require('../../assets/图片4.png'),
             }, {
                 value: '4',
-                label: '商品4',
+                label: 'XM1014 | 斯康里娅',
                 price: '300',
-                img: require('../../assets/logo.png'),
+                img: require('../../assets/图片7.png'),
             }, {
                 value: '5',
-                label: '商品5',
+                label: 'M4A4 | 沙漠精英',
                 price: '300',
-                img: require('../../assets/logo.png'),
+                img: require('../../assets/图片2.png'),
             }],
             form: {},
             tableData: []

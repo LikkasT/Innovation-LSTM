@@ -41,38 +41,38 @@ export default {
         return {
             activeName: '1',
             tableData: [{
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                add: '7%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                add: '7%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片3.png'),
+                name: '印花 | Vitality（全息）| 2023年巴黎锦标赛',
+                add: '16%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片4.png'),
+                name: '双持贝瑞塔 | 左右开花',
+                add: '45%'
             }],
             tableData2: [{
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片5.png'),
+                name: 'USP 消音版 | 引擎故障灯',
+                add: '110%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片2.png'),
+                name: 'AK-47 | 可燃冰',
+                add: '31%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片6.png'),
+                name: 'XM1014 | 斯康里娅',
+                add: '20%'
             }, {
-                img: require('../../assets/logo.png'),
-                name: '王小虎',
-                add: '60%'
+                img: require('../../assets/图片7.png'),
+                name: 'M4A4 | 沙漠精英',
+                add: '13%'
             }]
         }
     },
