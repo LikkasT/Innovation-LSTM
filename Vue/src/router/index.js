@@ -2,17 +2,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import * as auth from '../utils/auth'
-import {
-    IndexPage,
-    // userRegister,
-    // userLogin,
-    userInfo,
-    tradingHotlist,
-    profitHotlist,
-    userFollow,
-    goodInfo,
-    tradingHistory,
-} from './routes'
+import {goodInfo, IndexPage, profitHotlist, tradingHistory, tradingHotlist, userFollow, userInfo,} from './routes'
+
 Vue.use(VueRouter);
 
 

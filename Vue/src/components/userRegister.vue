@@ -35,10 +35,8 @@
 
 <script>
 /* eslint-disable */
-import axios from 'axios'
 import PubSub from 'pubsub-js';
-import { API_BASE_URL } from "../assets/config";
-import { mapActions } from 'vuex';
+import {mapActions} from 'vuex';
 
 export default {
   name: "userRegister",

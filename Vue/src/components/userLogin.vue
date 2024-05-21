@@ -21,8 +21,9 @@
 
 <script>
 import PubSub from 'pubsub-js'
-import { mapActions } from 'vuex';
+import {mapActions} from 'vuex';
 import * as auth from '../utils/auth'
+
 export default {
     name: "userLogin",
     data() {

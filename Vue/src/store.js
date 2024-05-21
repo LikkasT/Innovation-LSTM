@@ -1,10 +1,6 @@
 import Vue from "vue";
 import Vuex from 'vuex'
-import {
-    userLogin,
-    userRegister,
-
-} from "./api/api";
+import {userLogin, userRegister,} from "./api/api";
 
 Vue.use(Vuex);
 

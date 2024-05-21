@@ -59,10 +59,11 @@
 <script>
 /* eslint-disable */
 
-import { mapState, mapActions } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 import PubSub from 'pubsub-js';
 import axios from 'axios';
 import * as auth from '../utils/auth'
+
 export default {
     name: 'Home',
     data() {
