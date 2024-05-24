@@ -1,21 +1,9 @@
 import json
-from datetime import timedelta
-
-import numpy as np
-import pandas as pd
-from django.contrib.auth.hashers import check_password
-from keras.layers import LSTM, Dense, Dropout
-from keras.models import Sequential
-from rest_framework import serializers
-from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from rest_framework.views import APIView
-from sklearn.preprocessing import MinMaxScaler
 from django.http import JsonResponse
-
 from .models import *
-
-
+from .tasks import my_background_task
+from django_q.tasks import async_task
 # Create your views here.
 
 
@@ -254,90 +242,23 @@ def goods_show(request):
         try:
             goods = JewelryType.objects.filter(name=jewelry_name)
             for good in goods:
+                message[good] = {'priceLog': [],
+                                 'predictLog': [],
+                                 'predictDate': [],
+                                 'priceDate': []}
                 message[good]['name'] = good.name
                 message[good]['wear_and_tear'] = good.wear_and_tear
                 message[good]['image'] = good.image
                 message[good]['jewelry_id'] = good.jewelry_id
                 price = Jewelry.objects.filter(jewelry_id=good.jewelry_id)
-                message[good] = {'pricelog': []}
-                data_log = []
-                price_log = []
-                quantity_log = []
                 for price in price:
-                    message[good]['price'].append(price)
-                    data_log.append(price.date)
-                    price_log.append(price.price)
-                    quantity_log.append(price.units_sold)
-                data = pd.DataFrame({
-                    'date': data_log,
-                    'price': price_log,
-                    'quantity_on_sale': quantity_log
-                })
-                data['date'] = pd.to_datetime(data['date'])
-
-                # 创建dataframe对象
-                dataframe = data.set_index('date')
-
-                # 数据预处理
-                scaler = MinMaxScaler(feature_range=(0, 1))
-                dataset = scaler.fit_transform(dataframe[['price']].values)
-
-                # 构建数据集
-                def create_dataset(dataset, look_back=1):
-                    dataX, dataY = [], []
-                    for i in range(len(dataset) - look_back - 1):
-                        a = dataset[i:(i + look_back), 0]
-                        dataX.append(a)
-                        dataY.append(dataset[i + look_back, 0])
-                    return np.array(dataX), np.array(dataY)
-
-                # 构建输入特征X和输出Y
-                look_back = 14  # 增加为14天的数据
-                trainX, trainY = create_dataset(dataset, look_back)
-
-                # 调整输入数据的格式
-                trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
-
-                # 构建更复杂的LSTM多变量模型
-                model = Sequential()
-                model.add(LSTM(64, input_shape=(1, look_back), return_sequences=True))
-                model.add(Dropout(0.2))
-                model.add(LSTM(64, return_sequences=False))
-                model.add(Dropout(0.2))
-                model.add(Dense(1))
-                model.compile(loss='mean_squared_error', optimizer='adam')
-                model.fit(trainX, trainY, epochs=300, batch_size=16, verbose=2)
-
-                # 使用模型进行预测
-                def predict_next_seven_days(model, dataset, look_back=14, scaler=None):  # 修改为14天的数据
-                    last_data = dataset[-look_back:]
-                    prediction = []
-                    for i in range(7):
-                        X = np.array(last_data).reshape(1, 1, look_back)
-                        pred = model.predict(X)
-                        last_data = np.append(last_data, pred)[-look_back:]
-                        prediction.append(pred[0, 0])
-                    prediction = scaler.inverse_transform(np.array(prediction).reshape(-1, 1))
-                    return prediction
-
-                # 预测未来七天的价格
-                future_prediction = predict_next_seven_days(model, dataset, look_back, scaler)
-
-                # 生成未来七天的日期
-                forecast_dates = [dataframe.index[-1] + timedelta(days=(i + 1)) for i in range(7)]
-
-                # 将预测结果添加到数据框中
-                forecast = pd.DataFrame(future_prediction, index=forecast_dates, columns=['price'])
-
-                # 将预测结果转换为JSON格式
-                forecast_json = forecast.reset_index().to_json(orient='records', date_format='iso')
-                forecast_data = json.loads(forecast_json)
-
-                # 将预测结果添加到JSON对象中
-                output_json = {
-                    "future_predictions": forecast_data
-                }
-                response_data = {'message': message,'output_json': output_json}
+                    if price.units_sold == '':
+                        message[good]['predictLog'].append(price.price)
+                        message[good]['predictDate'].append(price.date)
+                    else:
+                        message[good]['priceLog'].append(price.price)
+                        message[good]['priceDate'].append(price.date)
+                response_data = {'message': message}
                 return JsonResponse(response_data, status=200)
         except JewelryType.DoesNotExist:
             error_message = 'good not found.'
@@ -481,6 +402,12 @@ def history(request):
             return JsonResponse({'success': 'delete success'}, status=200)
         except Transaction.DoesNotExist:
             return JsonResponse({'error': 'wrong transactionID'}, status=HTTP_400_BAD_REQUEST)
+
+
+def runback(request):
+    if request.method == 'GET':
+        result = async_task(my_background_task)
+        print(result)
 
 
 

@@ -101,8 +101,7 @@ class Jewelry(models.Model):
     # 可为null且删除饰品后jewelry_id置空
     objects = JewelryManager()
 
-# 在terminal中先输入：python manage.py makemigrations（无法运行则输入python当前版本如python3.7）
-# 再输入python manage.py migrate      PS:这两步操作需要在项目根目录进行
+
 
 # 添加数据
 # Transaction.objects.create(income="50",expense="20",price="30",identifier="收益")

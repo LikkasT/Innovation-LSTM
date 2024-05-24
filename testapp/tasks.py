@@ -1,9 +1,8 @@
-from background_task import background
 import itertools
 import logging
 import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import numpy as np
 import pandas as pd
@@ -12,25 +11,20 @@ from keras.models import Sequential
 from sklearn.preprocessing import MinMaxScaler
 from .models import *
 import requests
-from testapp import models
+from django_q.tasks import async_task
+
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-# def get_image(session, url):
-#    try:
-#        response = session.get(url)
-#        response.raise_for_status()  # 检查响应状态码，如果不是200会抛出异常
-#        return response.content
-#    except requests.RequestException as e:
-#        logging.error(f"Failed to fetch image from {url}: {e}")
-#        return None
+
 
 def get_history_price(session, goods_id):
     url = f"https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id={goods_id}&currency=CNY&days=180&buff_price_type=2&_=1682951672714"
     try:
         response = session.get(url)
-        response.raise_for_status()  # 检查响应状态码，如果不是200会抛出异常
+        response.raise_for_status()
         data = response.json()
         if 'data' in data and 'price_history' in data['data']:
             return data['data']['price_history']
@@ -53,21 +47,21 @@ def get_items(session):
         url = f"https://buff.163.com/api/market/goods?game=csgo&page_num={page}&use_suggestion=0&_=1682951638925"
         try:
             response = session.get(url)
-            response.raise_for_status()  # 检查响应状态码，如果不是200会抛出异常
+            response.raise_for_status()
             data = response.json()['data']
             items = data['items']
             for item in itertools.islice(items, 6):
                 short_name = item['short_name']
                 logging.info(f'正在爬取 {short_name}')
                 icon_url = item['goods_info']['icon_url']
-                # icon = get_image(session, icon_url)
+
                 if icon_url:
                     i = 0
                     for record in get_history_price(session, item['id']):
                         goodsUrl = icon_url
-                        # sheet[f'A{index}'] = sheet.add_image(image, f'A{index}')
+
                         goodsName = short_name
-                        # sheet[f'C{index}'] = item['sell_reference_price']
+
                         goodsAbradability = ''.join(re.findall('\((.*?)\)', item['name']))
                         priceDay[i] = datetime.fromtimestamp(int(str(record[0])[:-3])).strftime("%Y-%m-%d %H:%M:%S")
                         goodsPrice[i] = record[1]
@@ -86,10 +80,10 @@ def get_items(session):
                 break
         except requests.RequestException as e:
             logging.error(f"Failed to fetch items from page {page}: {e}")
-            time.sleep(5)  # 等待一段时间后重试
+            time.sleep(5)
         except (KeyError, ValueError) as e:
             logging.error(f"Error processing JSON data for page {page}: {e}")
-            time.sleep(5)  # 等待一段时间后重试
+            time.sleep(5)
     return goodsData
 
 
@@ -132,18 +126,28 @@ def readJson():
             sellNumber = jsonData['product_info'][i][6]
             sellDays = jsonData['product_info'][i][3]
             goodsPrice = jsonData['product_info'][i][4]
-            good_exists = models.JewelryType.objects.filter(name=goodsName, wear_and_tear=goodsAbradability).exists()
+            good_exists = JewelryType.objects.filter(name=goodsName, wear_and_tear=goodsAbradability).exists()
             if not good_exists:
-                models.JewelryType.objects.create(name=goodsName, wear_and_tear=goodsAbradability, image=pictureUrl,
+                JewelryType.objects.create(name=goodsName, wear_and_tear=goodsAbradability, image=pictureUrl,
                                                   jewelry_id=goodsId)
             for j in sellDays.keys():
-                #加一个自动覆盖来覆盖预测数据，
-                #加一个自动删除控制在37条。
+
+
                 day = sellDays[j]
                 price = goodsPrice[j]
-                sale_exists = models.Jewelry.objects.filter(jewelry_id=goodsId, date=day).exists()
+                sale_exists = Jewelry.objects.filter(jewelry_id=goodsId, date=day).exists()
+                if j == '60':
+                    good_last = JewelryType.objects.get(jewelry_id=goodsId)
+                    good_last.current_price = price
+                    good_last.save()
                 if not sale_exists:
-                    models.Jewelry.objects.create(jewelry_id=goodsId, date=day, price=price, units_sold=sellNumber)
+                    Jewelry.objects.create(jewelry_id=goodsId, date=day, price=price, units_sold=sellNumber)
+                else:
+                    good = Jewelry.objects.get(jewelry_id=goodsId,date=day)
+                    if good.units_sold == '':
+                        good.units_sold = sellNumber
+                        good.price = price
+                        good.save()
 
 
 def readLSTMJson():
@@ -181,7 +185,7 @@ def create_dataset(dataset, look_back=1):
     return np.array(dataX), np.array(dataY)
 
 
-def predict_next_seven_days(model, dataset, look_back=14, scaler=None):  # 修改为14天的数据
+def predict_next_seven_days(model, dataset, look_back=14, scaler=None):
     last_data = dataset[-look_back:]
     prediction = []
     for i in range(7):
@@ -202,7 +206,6 @@ def LSTM():
         price_log = []
         quantity_log = []
         for price in prices:
-            # 需要引入日期判断，如果是今天之前的日期，且价格数据与current价格一致，则读取。
             if price.quantity != '':
                 data_log.append(price.date)
                 price_log.append(price.price)
@@ -213,17 +216,16 @@ def LSTM():
                 'quantity_on_sale': quantity_log
             })
             dataframe = data.set_index('date')
-            # 数据预处理
+
             scaler = MinMaxScaler(feature_range=(0, 1))
             dataset = scaler.fit_transform(dataframe[['price']].values)
-            # 构建数据集
-            # 构建输入特征X和输出Y
-            look_back = 14  # 增加为14次的数据
+
+            look_back = 14
             trainX, trainY = create_dataset(dataset, look_back)
-            # 调整输入数据的格式
+
             trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
 
-            # 构建更复杂的LSTM多变量模型
+
             model = Sequential()
             model.add(LSTM(64, input_shape=(1, look_back), return_sequences=True))
             model.add(Dropout(0.2))
@@ -232,17 +234,17 @@ def LSTM():
             model.add(Dense(1))
             model.compile(loss='mean_squared_error', optimizer='adam')
             model.fit(trainX, trainY, epochs=300, batch_size=16, verbose=2)
-            # 使用模型进行预测
-            # 预测未来七天的价格
+
+
             future_prediction = predict_next_seven_days(model, dataset, look_back, scaler)
-            # 生成未来七天的日期
+
             forecast_dates = [dataframe.index[-1] + timedelta(days=(i + 1)) for i in range(7)]
-            # 将预测结果添加到数据框中
+
             forecast = pd.DataFrame(future_prediction, index=forecast_dates, columns=['price'])
-            # 将预测结果转换为JSON格式
+
             forecast_json = forecast.reset_index().to_json(orient='records', date_format='iso')
             forecast_data = json.loads(forecast_json)
-            # 将预测结果添加到JSON对象中
+
             output_json[good_id]: forecast_data
 
     return output_json
@@ -252,9 +254,11 @@ def LSTM_task():
     saveLSTMJson(LSTM())
 
 
-@background(schedule=timedelta(hours=24))
 def my_background_task():
     spider_task()
-    spider_read()
+    spider_task()
     LSTM_task()
-    # 在后台执行的任务代码
+    readLSTMJson()
+    return "Task completed"
+
+
