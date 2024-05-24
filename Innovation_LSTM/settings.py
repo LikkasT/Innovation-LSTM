@@ -37,19 +37,33 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'testapp.apps.TestappConfig'
+    'testapp.apps.TestappConfig',
+    'corsheaders'
+    'background_task',
 ]
-
+CORS_ALLOW_CREDENTIALS = True
+BACKGROUND_TASK_RUN_ASYNC = True
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://192.168.101.18:8081'
+# ]
+CORS_ALLOWED_ORIGINS = [
+    # 'http://192.168.101.18:8081'
+    'http://*'
+]
 
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https://\w+\.example\.com$",
+# ]
 ROOT_URLCONF = 'Innovation_LSTM.urls'
 
 TEMPLATES = [
@@ -78,9 +92,9 @@ WSGI_APPLICATION = 'Innovation_LSTM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test11',
+        'NAME': 'cchop',
         'USER': 'root',
-        'PASSWORD': '114514',
+        'PASSWORD': 'Szc#030609',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -116,7 +130,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+DEBUG=True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/

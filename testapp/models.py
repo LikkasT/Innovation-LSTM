@@ -87,6 +87,7 @@ class Transaction(models.Model):
     # 外键为用户
     user = models.ForeignKey(to="User",to_field="user_id",null=True,blank=True,on_delete=models.SET_NULL)
     # 可为null且删除用户后user置空
+    jewelry_type = models.ForeignKey(to='JewelryType',to_field="jewelry_id",null=True,blank=True,on_delete=models.SET_NULL)
 
 
 # 饰品小类

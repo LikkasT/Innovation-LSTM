@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 from testapp import views
-from testapp.views import SearchView
+
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -27,5 +27,5 @@ urlpatterns = [
     path('api/goods_show/', views.goods_show),
     path('api/trading_hot_list/', views.trading_hot_list),
     path('api/earnings_ranking/', views.earnings_ranking),
-    path('search/', SearchView.as_view(), name='search'),
+    path('api/history/', views.history),
 ]
