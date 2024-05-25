@@ -1,9 +1,12 @@
 import json
+import os
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from django.http import JsonResponse
 from .models import *
 from .tasks import my_background_task
 from django_q.tasks import async_task
+from django.core.files.storage import FileSystemStorage
+
 # Create your views here.
 
 
@@ -28,7 +31,7 @@ def create_user(request):
 
         # registerData = request.data.POST
         steamId = registerData['steamID']
-        # picTure = register['picture']
+        # 创建头像时默认无头像的
         userName = registerData['userName']
         phoneNumber = registerData['phoneNumber']
         emAil = registerData['email']
@@ -39,22 +42,20 @@ def create_user(request):
             return JsonResponse({'error': error_message}, status=401)
         else:
             User.objects.create(steam_id=steamId, username=userName,
-                                       phone_number=phoneNumber, email=emAil, password=passWord)
+                                       phone_number=phoneNumber, email=emAil, password=passWord,picture='')
             user = User.objects.get(phone_number=phoneNumber)
             message = {'userID': user.user_id,
-                       'userName': user.username,
-                       'userEmail': user.email,
-                       'userPhoneNumber': user.phone_number,
-                       'userPass': user.password,
-                       'userSteamID': user.steam_id,
+                       # 'userName': user.username,
+                       # 'userEmail': user.email,
+                       # 'userPhoneNumber': user.phone_number,
+                       # 'userPass': user.password,
+                       # 'userSteamID': user.steam_id,
                        'message': 'Registration successful'}
-
             return JsonResponse(message, status=200)
             # 返回一个保存成功的标识
 
 
 def user_login(request):
-    # 加个标识登录状态的参数
     if request.method == 'POST':
         userData = json.loads(request.body)
         phoneNumber = userData['phoneNumber']
@@ -87,13 +88,12 @@ def user_login(request):
 def user_modify(request):
     if request.method == 'UPDATE':
         modifyData = json.loads(request.body)
-        userId = modifyData['userid']
-        steamId = modifyData['steamid']
-        #图片加个转码，存本地，暂定base64
-        # picTure = user['picture']
-        userName = modifyData['username']
-        phoneNumber = modifyData['phone_number']
-        emAil = modifyData['email']
+        userId = modifyData['userID']
+        steamId = modifyData['userSteamID']
+        userAvatar = modifyData['userURL']
+        userName = modifyData['userName']
+        phoneNumber = modifyData['userPhoneNumber']
+        emAil = modifyData['userEmail']
         passWord = modifyData['password']
         if User.objects.filter(userid=userId).exists():
             try:
@@ -103,7 +103,7 @@ def user_modify(request):
                 else:
                     # 修改用户信息
                     user.steamid = steamId
-                    # user.picture = picTure
+                    user.picture = userAvatar
                     user.username = userName
                     user.phone_number = phoneNumber
                     user.email = emAil
@@ -118,28 +118,37 @@ def user_modify(request):
             error_message = 'user not found.'
             return JsonResponse({'error': error_message}, status=HTTP_400_BAD_REQUEST)
 
-    if request.method == 'GET':
-        userid = json.loads(request.body)
-        try:
-            user = User.objects.get(userid=userid)
-            response_data = {'message':
-                {
-                    'username': user.username,
-                    'email': user.email,
-                    'phoneNumber': user.phone_number,
-                    'picture': user.picture,
-                    'steamid': user.steamid,
-                    'password': user.password,
-                    'userid': user.userid
-                }
-            }
-            return JsonResponse(response_data, status=200)
-        except User.DoesNotExist:
-            error_message = 'user not found.'
-            return JsonResponse({'error': error_message}, status=HTTP_400_BAD_REQUEST)
+    # if request.method == 'GET':
+    #     userid = json.loads(request.body)
+    #     try:
+    #         user = User.objects.get(userid=userid)
+    #         response_data = {'message':
+    #             {
+    #                 'username': user.username,
+    #                 'email': user.email,
+    #                 'phoneNumber': user.phone_number,
+    #                 'picture': user.picture,
+    #                 'steamid': user.steamid,
+    #                 'password': user.password,
+    #                 'userid': user.userid
+    #             }
+    #         }
+    #         return JsonResponse(response_data, status=200)
+    #     except User.DoesNotExist:
+    #         error_message = 'user not found.'
+    #         return JsonResponse({'error': error_message}, status=HTTP_400_BAD_REQUEST)
 
+def user_avatar(request):
+    if request.method == 'POST' and request.FILES['avatar']:
+        uploaded_avatar = request.FILES['avatar']
+        fs = FileSystemStorage(location=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'))
+        filename = fs.save(uploaded_avatar.name, uploaded_avatar)
+        uploaded_avatar_url = fs.url(filename)
+        return JsonResponse({'avatar_url': uploaded_avatar_url})
+    else:
+        return JsonResponse({'error': '未收到图片'})
 
-#商品收藏页面，post函数包括了添加和删除，get函数返回{message:{collection1:商品id，collection2：商品id}}
+        #商品收藏页面，post函数包括了添加和删除，get函数返回{message:{collection1:商品id，collection2：商品id}}
 
 def collection(request):
     message = {}

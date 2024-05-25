@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/runback/', views.runback),
     path('api/user_login/', views.user_login),
     path('api/user_modify/', views.user_modify),
+    path('api/user_avatar', views.user_avatar),
     path('api/collection/', views.collection),
     path('api/goods_show/', views.goods_show),
     path('api/trading_hot_list/', views.trading_hot_list),
