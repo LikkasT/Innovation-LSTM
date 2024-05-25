@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/goods_show/', views.goods_show),
     path('api/trading_hot_list/', views.trading_hot_list),
     path('api/earnings_ranking/', views.earnings_ranking),
+    path('api/search/', views.search),
 
     path('api/history/', views.history),
 ]

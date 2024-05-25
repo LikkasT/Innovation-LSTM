@@ -350,12 +350,37 @@ def earnings_ranking(request):
             response_data = {'message': message, 'count': count}
             return JsonResponse(response_data, status=200)
 
+
+
+def search(request):
+    message = []
+    if request.method == 'GET':
+        param_value = request.GET.get('param_name', 'default_value')
+        if param_value != 'default_value':
+            j = 0
+            i = 1
+            products = JewelryType.objects.filter(name__icontains=param_value)[:50]
+            for product in products:
+                for message_item in message:
+                    if product.name == message_item:
+                        j = 1
+                if j == 0:
+                    if i<10:
+                        message.append(product.name)
+                        i = i+1
+            search = {'products': message, 'query': param_value}
+            if not message:
+                return JsonResponse({'no such product.'}, status=HTTP_400_BAD_REQUEST)
+        else:
+            search = {'products': [], 'query': ''}
+        return JsonResponse({ 'search': search}, status=200)
 def history(request):
     #需要加个商品id外键
     if request.method == 'GET':
         message = {}
         txt = json.loads(request.body)
         param_value = request.GET.get('param_name', 'default_value')
+
         userID = txt['userID']
         if param_value != 'default_value':
             products = JewelryType.objects.filter(name__icontains=param_value)[:10]
