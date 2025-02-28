@@ -3,22 +3,6 @@ from django.db import models
 from django.db.models import F, Subquery, OuterRef, Case, When, Value, DecimalField
 
 
-# CharField对应于MySQL中的VARCHAR。unique=True用于指定该字段的值在数据库中是唯一的。
-# EmailField是Django提供的特殊字段，会验证电子邮件地址的有效性。
-# unique_together用于指定在数据库中联合唯一性约束。
-
-# Django项目中的settings.py文件，找到DATABASES设置部分，并进行如下配置：
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'CSshop',
-#         'USER': '数据库用户，我猜是root',
-#         'PASSWORD': '数据库密码',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
 # 饰品大类
 class JewelryType(models.Model):
     jewelry_id = models.AutoField(primary_key=True)
